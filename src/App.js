@@ -5,6 +5,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 
 import NavigationBar from "./NavigationBar";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,8 +24,7 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         padding: theme.spacing(3),
-    },
-
+    }
 }));
 
 function App() {
@@ -36,6 +37,12 @@ function App() {
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
+                    <Route path="/sign-in">
+                        <SignIn />
+                    </Route>
+                    <Route path="/sign-up">
+                        <SignUp />
+                    </Route>
                     <Route path="/me">
                         <Typography paragraph>Profile page.</Typography>
                     </Route>

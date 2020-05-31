@@ -18,8 +18,12 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import './NavigationBar.css';
+import Badge from "@material-ui/core/Badge";
 
 
 const drawerWidth = 240;
@@ -78,6 +82,9 @@ const useStyles = makeStyles((theme) =>
             // necessary for content to be below app bar
             ...theme.mixins.toolbar,
         },
+        title: {
+            flexGrow: 1,
+        },
         navLink: {
             textDecoration: 'none'
         }
@@ -113,7 +120,7 @@ const NavigationBar = (props) => {
                     [classes.appBarShift]: isOpen,
                 })}
             >
-                <Toolbar>
+                <Toolbar className={classes.toolbar}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -125,9 +132,17 @@ const NavigationBar = (props) => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+                    <Typography variant="h6" noWrap className={classes.title}>
                         Optimus Type
                     </Typography>
+                    <Typography>
+                        hesoyam11
+                    </Typography>
+                    <IconButton color="inherit">
+                        <Badge color="secondary">
+                            <ExitToAppIcon />
+                        </Badge>
+                    </IconButton>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -162,13 +177,25 @@ const NavigationBar = (props) => {
                             <ListItemText primary="Profile" />
                         </ListItem>
                     </NavLink>
-                </List>
-                <Divider />
-                <List>
                     <NavLink to="/about" className={classes.navLink}>
                         <ListItem button selected={activeRoute("/about")}>
                             <ListItemIcon><InboxIcon /></ListItemIcon>
                             <ListItemText primary="About" />
+                        </ListItem>
+                    </NavLink>
+                </List>
+                <Divider />
+                <List>
+                    <NavLink to="/sign-in" className={classes.navLink}>
+                        <ListItem button selected={activeRoute("/sign-in")}>
+                            <ListItemIcon><LockOpenIcon /></ListItemIcon>
+                            <ListItemText primary="Sign In" />
+                        </ListItem>
+                    </NavLink>
+                    <NavLink to="/sign-up" className={classes.navLink}>
+                        <ListItem button selected={activeRoute("/sign-up")}>
+                            <ListItemIcon><AssignmentIndIcon /></ListItemIcon>
+                            <ListItemText primary="Sign Up" />
                         </ListItem>
                     </NavLink>
                 </List>
