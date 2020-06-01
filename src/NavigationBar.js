@@ -206,6 +206,12 @@ const NavigationBar = (props) => {
                             <ListItemText primary="About" />
                         </ListItem>
                     </NavLink>
+                    <NavLink to="/demo" className={classes.navLink}>
+                        <ListItem button selected={activeRoute("/demo")}>
+                            <ListItemIcon><InboxIcon /></ListItemIcon>
+                            <ListItemText primary="Demo" />
+                        </ListItem>
+                    </NavLink>
                 </List>
                 <Divider />
                 {

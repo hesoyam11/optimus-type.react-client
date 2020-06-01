@@ -10,6 +10,7 @@ import {
 import NavigationBar from "./NavigationBar";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
+import Demo from "./Demo";
 import useLocalStorage from "./utils/useLocalStorage";
 
 
@@ -79,6 +80,9 @@ function App() {
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
+                    <Route path="/demo">
+                        <Demo />
+                    </Route>
                     <Route path="/sign-in">
                         {isAuthenticated ? <Redirect to="/" /> : <SignIn doSignIn={doSignIn} />}
                     </Route>
