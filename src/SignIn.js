@@ -1,18 +1,19 @@
 import axios from 'axios';
 import React, {useState} from 'react';
-import { Link as RouterLink, Redirect } from 'react-router-dom';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
+import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import useLocalStorage from "./utils/useLocalStorage";
+import {
+    Avatar,
+    Button,
+    Container,
+    CssBaseline,
+    FormHelperText,
+    Grid,
+    Link,
+    TextField,
+    Typography
+} from '@material-ui/core';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function SignIn() {
+export default function SignIn(props) {
     const classes = useStyles();
 
     const [errorResponseData, setErrorResponseData] = useState();
@@ -50,8 +51,6 @@ export default function SignIn() {
         setPassword(event.target.value);
     }
 
-    const [authToken, setAuthToken] = useLocalStorage('authToken', null);
-
     const handleSignInClick = (event) => {
         event.preventDefault();
 
@@ -60,18 +59,13 @@ export default function SignIn() {
             { username, password }
             )
             .then(res => {
-                setAuthToken(res.data['authToken']);
+                const authToken = res.data['authToken'];
+                props.doSignIn(authToken);
             })
             .catch(error => {
                 setErrorResponseData(error.response.data);
             });
     };
-
-    if (authToken !== null) {
-        return (
-            <Redirect to="/"/>
-        )
-    }
 
     return (
         <Container component="main" maxWidth="xs">

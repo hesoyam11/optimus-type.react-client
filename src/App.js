@@ -1,12 +1,16 @@
+import axios from "axios";
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
+import {
+    CssBaseline,
+    Typography
+} from '@material-ui/core';
 
 import NavigationBar from "./NavigationBar";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
+import useLocalStorage from "./utils/useLocalStorage";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,21 +34,63 @@ const useStyles = makeStyles((theme) => ({
 function App() {
     const classes = useStyles();
 
+    const [authToken, setAuthToken] = useLocalStorage('authToken', null);
+    const [ , setUserId] = useLocalStorage('userId', null);
+    const [username, setUsername] = useLocalStorage('username', null);
+    const [ , setUserEmail] = useLocalStorage('userEmail', null);
+
+    const isAuthenticated = (authToken !== null);
+
+    const doSignIn = (authToken) => {
+        setAuthToken(authToken);
+
+        axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/users/me/`,
+            {
+                headers: {
+                    "Authorization": `Token ${authToken}`
+                }
+            }
+        )
+            .then((res) => {
+                setUserId(res.data["id"]);
+                setUsername(res.data["username"]);
+                setUserEmail(res.data["email"]);
+            })
+            .catch(() => {
+                alert(
+                    "Something went wrong while loading your profile data."
+                );
+                setAuthToken(null);
+            });
+    };
+
+    const doSignOut = () => {
+        setAuthToken(null);
+        setUserId(null);
+        setUsername(null);
+        setUserEmail(null);
+    };
+
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <NavigationBar />
+            <NavigationBar authToken={authToken} username={username} doSignOut={doSignOut}/>
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
                     <Route path="/sign-in">
-                        <SignIn />
+                        {isAuthenticated ? <Redirect to="/" /> : <SignIn doSignIn={doSignIn} />}
                     </Route>
                     <Route path="/sign-up">
-                        <SignUp />
+                        {isAuthenticated ? <Redirect to="/" /> : <SignUp />}
                     </Route>
                     <Route path="/me">
-                        <Typography paragraph>Profile page.</Typography>
+                        {
+                            isAuthenticated ?
+                                <Typography paragraph>Profile page.</Typography> :
+                                <Redirect to="/sign-in" />
+                        }
                     </Route>
                     <Route path="/about">
                         <Typography paragraph>About page.</Typography>
