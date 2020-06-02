@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Container
 } from '@material-ui/core';
@@ -53,9 +53,16 @@ export default function Demo() {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentMistakes, setCurrentMistakes] = useState([]);
-    const demoTextLength = demoText.length;
-
     const [isDemoInputFocused, setIsDemoInputFocused] = useState(false);
+    const [isCursorShown, setIsCursorShown] = useState(true);
+
+    useEffect(() => {
+        const intervalID = setInterval(() => {
+            setIsCursorShown(!isCursorShown);
+        }, 500);
+        return () => clearInterval(intervalID);
+    })
+
     const [demoInputRef, setDemoInputFocus] = useFocus();
 
     const handleDemoInputFocus = () => {
@@ -71,7 +78,7 @@ export default function Demo() {
         event.preventDefault();
 
         // If the full text is finally entered.
-        if (!(currentIndex < demoTextLength)) {
+        if (!(currentIndex < demoText.length)) {
             return;
         }
 
@@ -96,7 +103,7 @@ export default function Demo() {
                 }
             }
             // Else treat the character as an input character.
-            else if (currentIndex + currentMistakes.length < demoTextLength) {
+            else if (currentIndex + currentMistakes.length < demoText.length) {
                 setCurrentMistakes(
                     currentMistakes.concat(key)
                 );
@@ -130,7 +137,7 @@ export default function Demo() {
                                     classes.correctCharSpan : (
                                         (index < currentIndex + currentMistakes.length) ?
                                             classes.mistakeCharSpan : (
-                                                (index === currentIndex + currentMistakes.length) ?
+                                                (isCursorShown && index === currentIndex + currentMistakes.length) ?
                                                     classes.cursorCharSpan : ""
                                             )
                                     )
