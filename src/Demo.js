@@ -17,8 +17,19 @@ const useStyles = makeStyles(() =>
         correctCharSpan: {
             backgroundColor: 'green'
         },
-        hide: {
-            display: 'none',
+        mistakeCharSpan: {
+            backgroundColor: 'red'
+        },
+        cursorCharSpan: {
+            backgroundColor: 'black',
+            color: 'white'
+        },
+        fakeHide: {
+            height: 0,
+            opacity: 0
+        },
+        exerciseTextDiv: {
+            whiteSpace: "pre-wrap"
         },
         notFocusedDiv: {
             backgroundColor: 'gray'
@@ -29,7 +40,7 @@ const useStyles = makeStyles(() =>
 export default function Demo() {
     const classes = useStyles();
 
-    const demoText = "Lorem Ipsum is simply dummy text of the printing " +
+    const demoText = "Lorem   Ipsum is simply dummy text of the printing " +
         "and typesetting industry. Lorem Ipsum has been the industry's " +
         "standard dummy text ever since the 1500s, when an unknown printer " +
         "took a galley of type and scrambled it to make a type specimen book. " +
@@ -41,6 +52,7 @@ export default function Demo() {
         "Lorem Ipsum.";
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentMistakes, setCurrentMistakes] = useState([]);
     const demoTextLength = demoText.length;
 
     const [isDemoInputFocused, setIsDemoInputFocused] = useState(false);
@@ -54,26 +66,58 @@ export default function Demo() {
         setIsDemoInputFocused(false);
     };
 
-    const handleKeyPress = (event) => {
+    const handleKeyDown = (event) => {
+        // Stop the character from being typed into the synthetic input field.
+        event.preventDefault();
+
+        // If the full text is finally entered.
+        if (!(currentIndex < demoTextLength)) {
+            return;
+        }
+
         const key = event.key;
-        console.log(key);
-        if (currentIndex < demoTextLength && demoText[currentIndex] === key) {
+        console.log("Key: " + key);
+
+        if (key === 'Shift' || key === 'Process') {
+            return;
+        }
+
+        if (currentMistakes.length === 0 && key === demoText[currentIndex]) {
             setCurrentIndex(currentIndex + 1);
+        }
+        else {
+            // Backspace pressing is the only way to correct mistakes.
+            if (key === 'Backspace') {
+                // Do not backspace the already entered correct characters.
+                if (currentMistakes.length > 0) {
+                    setCurrentMistakes(
+                        currentMistakes.slice(0, currentMistakes.length - 1)
+                    );
+                }
+            }
+            // Else treat the character as an input character.
+            else if (currentIndex + currentMistakes.length < demoTextLength) {
+                setCurrentMistakes(
+                    currentMistakes.concat(key)
+                );
+            }
         }
     };
 
     return (
         <Container component="main" maxWidth="md">
             <input
+                className={classes.fakeHide}
                 ref={demoInputRef}
                 onFocus={handleDemoInputFocus}
                 onBlur={handleDemoInputBlur}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
             />
             <div
-                className={
-                    isDemoInputFocused ? null : classes.notFocusedDiv
-                }
+                className={[
+                    classes.exerciseTextDiv,
+                    (isDemoInputFocused) ? "" : classes.notFocusedDiv
+                ].join(" ")}
                 onClick={setDemoInputFocus}
             >
                 {
@@ -82,10 +126,21 @@ export default function Demo() {
                             key={index}
                             className={[
                                 classes.charSpan,
-                                (index < currentIndex) ? classes.correctCharSpan : ""
+                                (index < currentIndex) ?
+                                    classes.correctCharSpan : (
+                                        (index < currentIndex + currentMistakes.length) ?
+                                            classes.mistakeCharSpan : (
+                                                (index === currentIndex + currentMistakes.length) ?
+                                                    classes.cursorCharSpan : ""
+                                            )
+                                    )
                             ].join(" ")}
                         >
-                            {char}
+                            {
+                                (index >= currentIndex && index < currentIndex + currentMistakes.length) ?
+                                    currentMistakes[index - currentIndex] :
+                                    char
+                            }
                         </span>
                     ))
                 }
