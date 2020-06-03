@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Container
 } from '@material-ui/core';
@@ -6,6 +6,7 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 
 
 import useFocus from "./utils/useFocus";
+import VirtualKeyboard from "./VirtualKeyboard";
 
 
 const useStyles = makeStyles(() =>
@@ -77,13 +78,18 @@ export default function Demo() {
         // Stop the character from being typed into the synthetic input field.
         event.preventDefault();
 
+        //console.log(`Key: ${event.key}, Code: ${event.code}`);
+        console.log(event);
+        Object.keys(event).forEach((key) => {
+            console.log(key, event[key]);
+        });
+
         // If the full text is finally entered.
         if (!(currentIndex < demoText.length)) {
             return;
         }
 
         const key = event.key;
-        console.log("Key: " + key);
 
         if (key === 'Shift' || key === 'Process') {
             return;
@@ -152,6 +158,7 @@ export default function Demo() {
                     ))
                 }
             </div>
+            <VirtualKeyboard nextChar={demoText[currentIndex]}/>
         </Container>
     );
 };
