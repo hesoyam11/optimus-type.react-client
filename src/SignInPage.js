@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function SignIn(props) {
+export default function SignInPage(props) {
     const classes = useStyles();
 
     const [errorResponseData, setErrorResponseData] = useState();

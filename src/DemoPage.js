@@ -38,7 +38,7 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-export default function Demo() {
+export default function DemoPage() {
     const classes = useStyles();
 
     const demoText = "Lorem   Ipsum is simply dummy text of the printing " +
@@ -62,7 +62,7 @@ export default function Demo() {
             setIsCursorShown(!isCursorShown);
         }, 500);
         return () => clearInterval(intervalID);
-    })
+    });
 
     const [demoInputRef, setDemoInputFocus] = useFocus();
 

@@ -1,17 +1,18 @@
 import axios from "axios";
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {
     CssBaseline,
     Typography
 } from '@material-ui/core';
 
-import NavigationBar from "./NavigationBar";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
-import Demo from "./Demo";
 import useLocalStorage from "./utils/useLocalStorage";
+import NavigationBar from "./NavigationBar";
+import SignInPage from "./SignInPage";
+import SignUpPage from "./SignUpPage";
+import ExerciseListPage from "./ExerciseListPage";
+import DemoPage from "./DemoPage";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -81,13 +82,13 @@ function App() {
                 <div className={classes.toolbar} />
                 <Switch>
                     <Route path="/demo">
-                        <Demo />
+                        <DemoPage />
                     </Route>
                     <Route path="/sign-in">
-                        {isAuthenticated ? <Redirect to="/" /> : <SignIn doSignIn={doSignIn} />}
+                        {isAuthenticated ? <Redirect to="/" /> : <SignInPage doSignIn={doSignIn} />}
                     </Route>
                     <Route path="/sign-up">
-                        {isAuthenticated ? <Redirect to="/" /> : <SignUp />}
+                        {isAuthenticated ? <Redirect to="/" /> : <SignUpPage />}
                     </Route>
                     <Route path="/me">
                         {
@@ -96,8 +97,8 @@ function App() {
                                 <Redirect to="/sign-in" />
                         }
                     </Route>
-                    <Route path="/about">
-                        <Typography paragraph>About page.</Typography>
+                    <Route path="/exercises">
+                        <ExerciseListPage />
                     </Route>
                     <Route path="/">
                         <Typography paragraph>Home page.</Typography>

@@ -16,7 +16,9 @@ import {
     ListItemText,
 } from '@material-ui/core';
 import { createStyles, makeStyles, useTheme } from '@material-ui/core/styles';
-import InboxIcon from "@material-ui/icons/MoveToInbox";
+import HomeIcon from '@material-ui/icons/Home';
+import KeyboardIcon from '@material-ui/icons/Keyboard';
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -196,20 +198,20 @@ const NavigationBar = (props) => {
                 <List>
                     <NavLink to="/" className={classes.navLink}>
                         <ListItem button selected={activeRoute("/")}>
-                            <ListItemIcon><InboxIcon /></ListItemIcon>
+                            <ListItemIcon><HomeIcon /></ListItemIcon>
                             <ListItemText primary="Home" />
                         </ListItem>
                     </NavLink>
-                    <NavLink to="/about" className={classes.navLink}>
-                        <ListItem button selected={activeRoute("/about")}>
-                            <ListItemIcon><InboxIcon /></ListItemIcon>
-                            <ListItemText primary="About" />
+                    <NavLink to="/exercises" className={classes.navLink}>
+                        <ListItem button selected={activeRoute("/exercises")}>
+                            <ListItemIcon><KeyboardIcon /></ListItemIcon>
+                            <ListItemText primary="Exercises" />
                         </ListItem>
                     </NavLink>
                     <NavLink to="/demo" className={classes.navLink}>
                         <ListItem button selected={activeRoute("/demo")}>
-                            <ListItemIcon><InboxIcon /></ListItemIcon>
-                            <ListItemText primary="Demo" />
+                            <ListItemIcon><EmojiObjectsIcon /></ListItemIcon>
+                            <ListItemText primary="DemoPage" />
                         </ListItem>
                     </NavLink>
                 </List>
