@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+    Button,
     Container,
     Divider,
     Grid,
@@ -45,6 +46,20 @@ export default function ExerciseListPage() {
         }
     });
 
+    const handleShowMoreClick = () => {
+        if (nextPageLink === null) return;
+
+        axios.get(`${nextPageLink}`)
+            .then(res => {
+                setExercises(exercises.concat(res.data['results']));
+                setNextPageLink(res.data['next']);
+            })
+            .catch(error => {
+                alert("An error happened while loading exercises.");
+                console.log(error);
+            })
+    };
+
     return (
         <Container component="main" maxWidth="md">
             <Grid container spacing={2}>
@@ -69,12 +84,13 @@ export default function ExerciseListPage() {
                 ))}
                 {
                     nextPageLink &&
-                        <Grid key={-1} item xs={12} md={6}>
-                            <Paper className={classes.paper}>
-                                <Typography>
-                                    Show more search results
-                                </Typography>
-                            </Paper>
+                        <Grid key={-1} item xs={12}>
+                            <Button
+                                variant="contained" color="primary" fullWidth
+                                onClick={handleShowMoreClick}
+                            >
+                                Show more search results
+                            </Button>
                         </Grid>
                 }
             </Grid>
