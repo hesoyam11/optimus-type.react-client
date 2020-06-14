@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "12.17.0"
+script:
+  - npm test
+  - npm run build
+  - cp build/index.html build/200.html
+deploy:
+  provider: surge
+  skip_cleanup: true
+  domain: optimus-type.surge.sh
+  project: ./build/
+  on:
+    branch: prod/surge-sh
