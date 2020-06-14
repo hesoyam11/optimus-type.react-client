@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "12.17.0"
 script:
-  - npm test --passWithNoTests
+  - npm test
   - npm run build
   - cp build/index.html build/200.html
 deploy:
