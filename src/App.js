@@ -12,6 +12,7 @@ import NavigationBar from "./NavigationBar";
 import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
 import ExerciseListPage from "./ExerciseListPage";
+import ExerciseDetailPage from "./ExerciseDetailPage";
 import DemoPage from "./DemoPage";
 
 
@@ -81,27 +82,33 @@ function App() {
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
-                    <Route path="/demo">
+                    <Route exact path="/">
+                        <Typography paragraph>Home page.</Typography>
+                    </Route>
+                    <Route exact path="/demo">
                         <DemoPage />
                     </Route>
-                    <Route path="/sign-in">
+                    <Route exact path="/sign-in">
                         {isAuthenticated ? <Redirect to="/" /> : <SignInPage doSignIn={doSignIn} />}
                     </Route>
-                    <Route path="/sign-up">
+                    <Route exact path="/sign-up">
                         {isAuthenticated ? <Redirect to="/" /> : <SignUpPage />}
                     </Route>
-                    <Route path="/me">
+                    <Route exact path="/profile">
                         {
                             isAuthenticated ?
                                 <Typography paragraph>Profile page.</Typography> :
                                 <Redirect to="/sign-in" />
                         }
                     </Route>
-                    <Route path="/exercises">
+                    <Route exact path="/exercises/:exercise_id">
+                        <ExerciseDetailPage />
+                    </Route>
+                    <Route exact path="/exercises">
                         <ExerciseListPage />
                     </Route>
                     <Route path="/">
-                        <Typography paragraph>Home page.</Typography>
+                        <Typography>Page Not Found!</Typography>
                     </Route>
                 </Switch>
             </main>

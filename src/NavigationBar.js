@@ -27,8 +27,6 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import './NavigationBar.css';
-
 
 const drawerWidth = 240;
 
@@ -90,7 +88,8 @@ const useStyles = makeStyles((theme) =>
             flexGrow: 1,
         },
         navLink: {
-            textDecoration: 'none'
+            textDecoration: 'none',
+            color: 'black'
         }
     }),
 );
@@ -137,7 +136,7 @@ const NavigationBar = (props) => {
         if (routeName === "/") {
             return routeName === pathname;
         }
-        return pathname.startsWith(routeName);
+        return routeName === pathname || pathname.startsWith(`${routeName}/`);
     }
 
     return (
@@ -218,8 +217,8 @@ const NavigationBar = (props) => {
                 <Divider />
                 {
                     isAuthenticated ?
-                        <NavLink to="/me" className={classes.navLink}>
-                            <ListItem button selected={activeRoute("/me")}>
+                        <NavLink to="/profile" className={classes.navLink}>
+                            <ListItem button selected={activeRoute("/profile")}>
                                 <ListItemIcon><AccountBoxIcon /></ListItemIcon>
                                 <ListItemText primary="Profile" />
                             </ListItem>

@@ -1,32 +1,15 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import {
     Button,
     Container,
-    Divider,
-    Grid,
-    Paper,
-    Typography
+    Grid
 } from "@material-ui/core";
 
-import { localeFromInternalToHumanValue } from './utils/localeUtils.js';
+import ExerciseItemPaper from "./ExerciseItemPaper";
 
-
-const useStyles = makeStyles((theme) => ({
-    // TODO: Check this out?
-    root: {
-        flexGrow: 1,
-    },
-    paper: {
-        padding: theme.spacing(3),
-        width: "100%",
-    }
-}));
 
 export default function ExerciseListPage() {
-    const classes = useStyles();
-
     const [exercises, setExercises] = useState(null);
     const [nextPageLink, setNextPageLink] = useState(null);
 
@@ -65,21 +48,7 @@ export default function ExerciseListPage() {
             <Grid container spacing={2}>
                 {exercises !== null && exercises.map((item) => (
                     <Grid key={item['id']} item xs={12} md={6}>
-                        <Paper className={classes.paper}>
-                            <Typography component="h2" variant="h5">
-                                {item['title']}
-                            </Typography>
-                            <Divider />
-                            <Typography color="textSecondary">
-                                Locale: {localeFromInternalToHumanValue[item['locale']]}
-                            </Typography>
-                            <Typography color="textSecondary">
-                                Created by {item['creator']['username']} on {(new Date(item['createdAt'])).toDateString()}
-                            </Typography>
-                            <Typography>
-                                {item['content'].slice(0, 256) + (item['content'].length > 256 ? "..." : "")}
-                            </Typography>
-                        </Paper>
+                        <ExerciseItemPaper shortifyContent exercise={item} />
                     </Grid>
                 ))}
                 {
