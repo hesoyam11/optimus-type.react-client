@@ -35,7 +35,9 @@ export default function ExerciseItemPaper(props) {
                 Locale: {localeFromInternalToHumanValue[exercise['locale']]}
             </Typography>
             <Typography color="textSecondary">
-                Created by {exercise['creator']['username']} on {(new Date(exercise['createdAt'])).toDateString()}
+                Created by <NavLink to={`/users/${exercise['creator']['id']}`}>
+                    {exercise['creator']['username']}
+                </NavLink> on {(new Date(exercise['createdAt'])).toDateString()}
             </Typography>
             <Typography>{content}</Typography>
         </Paper>

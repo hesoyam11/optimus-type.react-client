@@ -18,6 +18,7 @@ import {
 import { createStyles, makeStyles, useTheme } from '@material-ui/core/styles';
 import HomeIcon from '@material-ui/icons/Home';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
+import PeopleIcon from '@material-ui/icons/People';
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -205,6 +206,12 @@ const NavigationBar = (props) => {
                         <ListItem button selected={activeRoute("/exercises")}>
                             <ListItemIcon><KeyboardIcon /></ListItemIcon>
                             <ListItemText primary="Exercises" />
+                        </ListItem>
+                    </NavLink>
+                    <NavLink to="/users" className={classes.navLink}>
+                        <ListItem button selected={activeRoute("/users")}>
+                            <ListItemIcon><PeopleIcon /></ListItemIcon>
+                            <ListItemText primary="Users" />
                         </ListItem>
                     </NavLink>
                     <NavLink to="/demo" className={classes.navLink}>
