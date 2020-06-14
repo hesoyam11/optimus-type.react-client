@@ -27,11 +27,11 @@ const useStyles = makeStyles((theme) => ({
 export default function ExerciseListPage() {
     const classes = useStyles();
 
-    const [exercises, setExercises] = useState([]);
+    const [exercises, setExercises] = useState(null);
     const [nextPageLink, setNextPageLink] = useState(null);
 
     useEffect(() => {
-        if (exercises.length === 0) {
+        if (exercises === null) {
             axios.get(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/`
             )
@@ -63,7 +63,7 @@ export default function ExerciseListPage() {
     return (
         <Container component="main" maxWidth="md">
             <Grid container spacing={2}>
-                {exercises.map((item) => (
+                {exercises !== null && exercises.map((item) => (
                     <Grid key={item['id']} item xs={12} md={6}>
                         <Paper className={classes.paper}>
                             <Typography component="h2" variant="h5">
