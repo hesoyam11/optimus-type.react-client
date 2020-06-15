@@ -13,6 +13,7 @@ import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
 import ExerciseListPage from "./ExerciseListPage";
 import ExerciseDetailPage from "./ExerciseDetailPage";
+import ExerciseTypePage from "./ExerciseTypePage";
 import UserListPage from "./UserListPage";
 import UserDetailPage from "./UserDetailPage";
 import DemoPage from "./DemoPage";
@@ -103,17 +104,20 @@ function App() {
                                 <Redirect to="/sign-in" />
                         }
                     </Route>
-                    <Route exact path="/exercises/:exercise_id">
-                        <ExerciseDetailPage />
-                    </Route>
                     <Route exact path="/exercises">
                         <ExerciseListPage />
                     </Route>
-                    <Route exact path="/users/:user_id">
-                        <UserDetailPage />
+                    <Route exact path="/exercises/:exercise_id">
+                        <ExerciseDetailPage />
+                    </Route>
+                    <Route exact path="/exercises/:exercise_id/type">
+                        <ExerciseTypePage />
                     </Route>
                     <Route exact path="/users">
                         <UserListPage />
+                    </Route>
+                    <Route exact path="/users/:user_id">
+                        <UserDetailPage />
                     </Route>
                     <Route path="/">
                         <Typography>Page Not Found!</Typography>
