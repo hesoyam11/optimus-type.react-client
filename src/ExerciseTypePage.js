@@ -53,6 +53,16 @@ export default function ExerciseTypePage(props) {
     const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
 
     const text = exercise ? exercise['content'] : "";
+    const layout = exercise ? new Map([
+            ["enUS", "enUSAQ"],
+            ["ukUA", "ukUAAЙ"],
+            ["ruRU", "ruRUAЙ"]
+        ]).get(exercise['locale']) : undefined;
+    const layoutDesc = layout ? new Map([
+            ["enUSAQ", "en_US, American, QWERTY"],
+            ["ukUAAЙ", "uk_UA, American, ЙЦУКЕН"],
+            ["ruRUAЙ", "ru_RU, American, ЙЦУКЕН"]
+        ]).get(layout) : "Unknown";
     const timeSpentMs = inputTimeLogs.length > 1 ?
         inputTimeLogs[inputTimeLogs.length - 1] - inputTimeLogs[0] : 0;
     const cpm = timeSpentMs > 0 ?
@@ -65,6 +75,7 @@ export default function ExerciseTypePage(props) {
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/${exerciseId}/`
             )
                 .then(res => {
+                    res.data['content'] = res.data['content'].replace('\r', '\n');
                     setExercise(res.data);
                 })
                 .catch(error => {
@@ -211,20 +222,21 @@ export default function ExerciseTypePage(props) {
                                 <Typography>CPM: {cpm}</Typography>
                             </Paper></Grid>
                             <Grid item xs={6}><Paper className={classes.infoPaper}>
-                                <Typography>Layout: en_US, American, QWERTY</Typography>
+                                <Typography>Layout: {layoutDesc}</Typography>
                             </Paper></Grid>
                             <Grid item xs={3}><Paper className={classes.infoPaper}>
                                 <Typography>Errors: {mistakeCharLogs.length}</Typography>
                             </Paper></Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <VirtualKeyboard nextChar={text[currentIndex]}/>
+                            <VirtualKeyboard nextChar={text[currentIndex]} layout={layout} />
                         </Grid>
                     </Grid>
             }
             <Dialog
                 open={isFinishDialogOpen || tooManyErrors}
-                // Produces warnings because of Material-UI's usage of deprecated findDOMNode :(
+                // Produces warnings because of Material-UI's usage of findDOMNode
+                // deprecated by React :(
                 TransitionComponent={Slide} TransitionProps={{direction: "up"}}
                 keepMounted
             >
