@@ -58,7 +58,6 @@ export default function VirtualKeyboard(props) {
     <React.Fragment>
         <svg
             width="100%"
-            height="auto"
             viewBox="0 0 912 310"
         >
             <g transform={buildTranslateString(0, 0)}><SquareKeyRect isHinted={nextChar === "`" || nextChar === "~"} mainChar='`' additionalChar='~' /></g>

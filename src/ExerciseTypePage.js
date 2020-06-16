@@ -6,51 +6,56 @@ import {
     Typography
 } from "@material-ui/core";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
+
 import useFocus from "./utils/useFocus";
+import VirtualText from "./VirtualText";
 import VirtualKeyboard from "./VirtualKeyboard";
 
 
 const useStyles = makeStyles(() =>
     createStyles({
-        charSpan: {
-            fontFamily: "Monospace",
-            fontSize: 18
-        },
-        correctCharSpan: {
-            backgroundColor: 'green'
-        },
-        mistakeCharSpan: {
-            backgroundColor: 'red'
-        },
-        cursorCharSpan: {
-            backgroundColor: 'black',
-            color: 'white'
-        },
         fakeHide: {
             height: 0,
             opacity: 0
-        },
-        exerciseTextDiv: {
-            whiteSpace: "pre-wrap"
-        },
-        notFocusedDiv: {
-            backgroundColor: 'gray'
         }
     }),
 );
 
-export default function ExerciseTypePage() {
+// {
+//     "layout": "enUSAQ",
+//     "exerciseId": 0,
+//     "inputTimeLogs": [
+//          0
+//      ],
+//     "mistakeTimeLogs": [
+//          0
+//      ],
+//     "mistakeCharLogs": "string"
+// }
+
+export default function ExerciseTypePage(props) {
     const classes = useStyles();
 
-    const { exercise_id } = useParams();
+    const { exerciseId } = useParams();
+
+    const authToken = props.authToken;
 
     const [exercise, setExercise] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentMistakes, setCurrentMistakes] = useState([]);
+    const [isInputFocused, setIsInputFocused] = useState(false);
+
+    const [inputTimeLogs, setInputTimeLogs] = useState([]);
+    const [mistakeTimeLogs, setMistakeTimeLogs] = useState([]);
+    const [mistakeCharLogs, setMistakeCharLogs] = useState("");
+    const [isAttemptSent, setIsAttemptSent] = useState(false);
+
     const text = exercise ? exercise['content'] : "";
 
     useEffect(() => {
         if (exercise === null) {
             axios.get(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/${exercise_id}/`
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/${exerciseId}/`
             )
                 .then(res => {
                     setExercise(res.data);
@@ -62,51 +67,82 @@ export default function ExerciseTypePage() {
         }
     });
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [currentMistakes, setCurrentMistakes] = useState([]);
-    const [isDemoInputFocused, setIsDemoInputFocused] = useState(false);
-    const [isCursorShown, setIsCursorShown] = useState(true);
+    const [inputRef, setInputRef] = useFocus();
 
-    useEffect(() => {
-        const intervalID = setInterval(() => {
-            setIsCursorShown(!isCursorShown);
-        }, 500);
-        return () => clearInterval(intervalID);
-    });
-
-    const [demoInputRef, setDemoInputFocus] = useFocus();
-
-    const handleDemoInputFocus = () => {
-        setIsDemoInputFocused(true);
-    };
-
-    const handleDemoInputBlur = () => {
-        setIsDemoInputFocused(false);
-    };
+    const handleInputFocus = () => setIsInputFocused(true);
+    const handleInputBlur = () => setIsInputFocused(false);
 
     const handleKeyDown = (event) => {
         // Stop the character from being typed into the synthetic input field.
         event.preventDefault();
 
         // console.log(`Key: ${event.key}, Code: ${event.code}`);
-        console.log(event);
-        Object.keys(event).forEach((key) => {
-            console.log(key, event[key]);
-        });
+        // console.log(event);
+        // Object.keys(event).forEach((key) => {
+        //     console.log(key, event[key]);
+        // });
 
         // If the full text is finally entered.
         if (!(currentIndex < text.length)) {
             return;
         }
 
-        const key = event.key;
+        let key = event.key;
 
-        if (key === 'Shift' || key === 'CapsLock' || key === 'Process') {
+        if (key === 'Enter') {
+            key = '\n';
+        }
+
+        if (key === 'Tab') {
+            key = '\t';
+        }
+
+        // Don't do anything if it is "Shift", "CapsLock", "Process", etc.
+        if (key !== 'Backspace' && key.length > 1) {
             return;
         }
 
         if (currentMistakes.length === 0 && key === text[currentIndex]) {
-            setCurrentIndex(currentIndex + 1);
+            const newCurrentIndex = currentIndex + 1;
+            const newInputTimeLogs = inputTimeLogs.concat((new Date()).getTime());
+            setCurrentIndex(newCurrentIndex);
+            setInputTimeLogs(newInputTimeLogs);
+
+            // If the last character just has been entered.
+            if (!(newCurrentIndex < text.length)) {
+                setIsAttemptSent(true);
+                if (authToken !== null) {
+                    // Make it start from zero.
+                    const startTime = (
+                        mistakeTimeLogs.length > 0 && mistakeTimeLogs[0] < newInputTimeLogs[0]
+                    ) ? mistakeTimeLogs[0] : newInputTimeLogs[0];
+                    const formattedInputTimeLogs = newInputTimeLogs.map(
+                        value => value - startTime
+                    );
+                    const formattedMistakeTimeLogs = mistakeTimeLogs.map(
+                        value => value - startTime
+                    );
+                    axios.post(
+                        `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/attempts/`,
+                        {
+                            exerciseId,
+                            layout: "enUSAQ",
+                            inputTimeLogs: formattedInputTimeLogs,
+                            mistakeTimeLogs: formattedMistakeTimeLogs,
+                            mistakeCharLogs
+                        },
+                        {
+                            headers: {
+                                "Authorization": `Token ${authToken}`
+                            }
+                        }
+                    )
+                        .catch(error => {
+                            alert("An error happened while saving your results.");
+                            console.log(error);
+                        });
+                }
+            }
         }
         else {
             // Backspace pressing is the only way to correct mistakes.
@@ -123,53 +159,35 @@ export default function ExerciseTypePage() {
                 setCurrentMistakes(
                     currentMistakes.concat(key)
                 );
+                setMistakeTimeLogs(
+                    mistakeTimeLogs.concat((new Date()).getTime())
+                );
+                setMistakeCharLogs(
+                    mistakeCharLogs.concat(key)
+                );
             }
         }
     };
 
     return (
         <Container component="main" maxWidth="md">{
+            isAttemptSent ? <Typography>Okay.</Typography> :
             exercise === null ? <Typography>Loading...</Typography> : <React.Fragment>
                 <input
                     className={classes.fakeHide}
-                    ref={demoInputRef}
-                    onFocus={handleDemoInputFocus}
-                    onBlur={handleDemoInputBlur}
+                    ref={inputRef}
+                    onFocus={handleInputFocus}
+                    onBlur={handleInputBlur}
                     onKeyDown={handleKeyDown}
                 />
-                <div
-                    className={[
-                        classes.exerciseTextDiv,
-                        (isDemoInputFocused) ? "" : classes.notFocusedDiv
-                    ].join(" ")}
-                    onClick={setDemoInputFocus}
-                >
-                    {
-                        text.split("").map((char, index) => (
-                            <span
-                                key={index}
-                                className={[
-                                    classes.charSpan,
-                                    (index < currentIndex) ?
-                                        classes.correctCharSpan : (
-                                            (index < currentIndex + currentMistakes.length) ?
-                                                classes.mistakeCharSpan : (
-                                                    (isCursorShown && index === currentIndex + currentMistakes.length) ?
-                                                        classes.cursorCharSpan : ""
-                                                )
-                                        )
-                                ].join(" ")}
-                            >
-                        {
-                            (index >= currentIndex && index < currentIndex + currentMistakes.length) ?
-                                currentMistakes[index - currentIndex] :
-                                char
-                        }
-                    </span>
-                        ))
-                    }
-                </div>
-                <VirtualKeyboard nextChar={text[currentIndex]}/>
+                <VirtualText
+                    text={text}
+                    currentIndex={currentIndex}
+                    currentMistakes={currentMistakes}
+                    isFocused={isInputFocused}
+                    handleInputFocus={setInputRef}
+                />
+                <VirtualKeyboard nextChar={text[currentIndex]} />
             </React.Fragment>
         }</Container>
     );

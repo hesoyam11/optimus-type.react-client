@@ -10,14 +10,14 @@ import UserItemPaper from "./UserItemPaper";
 
 
 export default function UserDetailPage() {
-    const { user_id } = useParams();
+    const { userId } = useParams();
 
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         if (user === null) {
             axios.get(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/users/${user_id}/`
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/users/${userId}/`
             )
                 .then(res => {
                     setUser(res.data);

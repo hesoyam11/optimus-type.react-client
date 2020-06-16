@@ -12,14 +12,14 @@ import Grid from "@material-ui/core/Grid";
 
 
 export default function ExerciseDetailPage() {
-    const { exercise_id } = useParams();
+    const { exerciseId } = useParams();
 
     const [exercise, setExercise] = useState(null);
 
     useEffect(() => {
         if (exercise === null) {
             axios.get(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/${exercise_id}/`
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/${exerciseId}/`
             )
                 .then(res => {
                     setExercise(res.data);
@@ -44,7 +44,7 @@ export default function ExerciseDetailPage() {
                 <Grid item xs={12}>
                     <Button
                         variant="contained" color="primary" fullWidth
-                        component={NavLink} to={`/exercises/${exercise_id}/type`}
+                        component={NavLink} to={`/exercises/${exerciseId}/type`}
                     >
                         Start typing
                     </Button>

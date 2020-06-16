@@ -16,7 +16,6 @@ import ExerciseDetailPage from "./ExerciseDetailPage";
 import ExerciseTypePage from "./ExerciseTypePage";
 import UserListPage from "./UserListPage";
 import UserDetailPage from "./UserDetailPage";
-import DemoPage from "./DemoPage";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -88,9 +87,6 @@ function App() {
                     <Route exact path="/">
                         <Typography paragraph>Home page.</Typography>
                     </Route>
-                    <Route exact path="/demo">
-                        <DemoPage />
-                    </Route>
                     <Route exact path="/sign-in">
                         {isAuthenticated ? <Redirect to="/" /> : <SignInPage doSignIn={doSignIn} />}
                     </Route>
@@ -107,16 +103,16 @@ function App() {
                     <Route exact path="/exercises">
                         <ExerciseListPage />
                     </Route>
-                    <Route exact path="/exercises/:exercise_id">
+                    <Route exact path="/exercises/:exerciseId">
                         <ExerciseDetailPage />
                     </Route>
-                    <Route exact path="/exercises/:exercise_id/type">
-                        <ExerciseTypePage />
+                    <Route exact path="/exercises/:exerciseId/type">
+                        <ExerciseTypePage authToken={authToken} />
                     </Route>
                     <Route exact path="/users">
                         <UserListPage />
                     </Route>
-                    <Route exact path="/users/:user_id">
+                    <Route exact path="/users/:userId">
                         <UserDetailPage />
                     </Route>
                     <Route path="/">

@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import {
     Button,
     Container,
-    Grid
+    Grid,
+    Typography
 } from "@material-ui/core";
 
 import ExerciseItemPaper from "./ExerciseItemPaper";
@@ -44,15 +45,18 @@ export default function ExerciseListPage() {
     };
 
     return (
-        <Container component="main" maxWidth="md">
-            <Grid container spacing={2}>
-                {exercises !== null && exercises.map((item) => (
-                    <Grid key={item['id']} item xs={12} md={6}>
-                        <ExerciseItemPaper shortifyContent exercise={item} />
-                    </Grid>
-                ))}
-                {
-                    nextPageLink &&
+        <Container component="main" maxWidth="md">{
+            exercises === null ? <Typography>Loading...</Typography> :
+                <Grid container spacing={2}>
+                    {
+                        exercises.map((item) => (
+                            <Grid key={item['id']} item xs={12} md={6}>
+                                <ExerciseItemPaper shortifyContent exercise={item}/>
+                            </Grid>
+                        ))
+                    }
+                    {
+                        nextPageLink &&
                         <Grid key={-1} item xs={12}>
                             <Button
                                 variant="contained" color="primary" fullWidth
@@ -61,8 +65,8 @@ export default function ExerciseListPage() {
                                 Show more search results
                             </Button>
                         </Grid>
-                }
-            </Grid>
-        </Container>
+                    }
+                </Grid>
+        }</Container>
     );
 };
