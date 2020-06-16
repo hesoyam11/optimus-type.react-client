@@ -1,10 +1,18 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
+import {NavLink} from "react-router-dom";
 import {useParams} from 'react-router-dom';
 import {
+    Button,
     Container,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
     Grid,
     Paper,
+    Slide,
     Typography
 } from "@material-ui/core";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
@@ -26,18 +34,6 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-// {
-//     "layout": "enUSAQ",
-//     "exerciseId": 0,
-//     "inputTimeLogs": [
-//          0
-//      ],
-//     "mistakeTimeLogs": [
-//          0
-//      ],
-//     "mistakeCharLogs": "string"
-// }
-
 export default function ExerciseTypePage(props) {
     const classes = useStyles();
 
@@ -53,13 +49,15 @@ export default function ExerciseTypePage(props) {
     const [inputTimeLogs, setInputTimeLogs] = useState([]);
     const [mistakeTimeLogs, setMistakeTimeLogs] = useState([]);
     const [mistakeCharLogs, setMistakeCharLogs] = useState("");
-    const [isAttemptSent, setIsAttemptSent] = useState(false);
+
+    const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
 
     const text = exercise ? exercise['content'] : "";
     const timeSpentMs = inputTimeLogs.length > 1 ?
         inputTimeLogs[inputTimeLogs.length - 1] - inputTimeLogs[0] : 0;
     const cpm = timeSpentMs > 0 ?
         Math.round(inputTimeLogs.length / (timeSpentMs / (60 * 1000))) : 0;
+    const tooManyErrors = (mistakeCharLogs.length > 32);
 
     useEffect(() => {
         if (exercise === null) {
@@ -119,7 +117,7 @@ export default function ExerciseTypePage(props) {
 
             // If the last character just has been entered.
             if (!(newCurrentIndex < text.length)) {
-                setIsAttemptSent(true);
+                setIsFinishDialogOpen(true);
                 if (authToken !== null) {
                     // Make it start from zero.
                     const startTime = (
@@ -177,9 +175,19 @@ export default function ExerciseTypePage(props) {
         }
     };
 
+    const handleTryAgainClick = () => {
+        setCurrentIndex(0);
+        setCurrentMistakes([]);
+        setIsInputFocused(false);
+        setInputTimeLogs([]);
+        setMistakeTimeLogs([]);
+        setMistakeCharLogs("");
+        setIsFinishDialogOpen(false);
+    };
+
     return (
-        <Container component="main" maxWidth="md">{
-            isAttemptSent ? <Typography>Okay.</Typography> :
+        <Container component="main" maxWidth="md">
+            {
                 exercise === null ? <Typography>Loading...</Typography> :
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
@@ -213,6 +221,34 @@ export default function ExerciseTypePage(props) {
                             <VirtualKeyboard nextChar={text[currentIndex]}/>
                         </Grid>
                     </Grid>
-        }</Container>
+            }
+            <Dialog
+                open={isFinishDialogOpen || tooManyErrors}
+                // Produces warnings because of Material-UI's usage of deprecated findDOMNode :(
+                TransitionComponent={Slide} TransitionProps={{direction: "up"}}
+                keepMounted
+            >
+                <DialogTitle>{
+                    tooManyErrors ? "Oops..." : "Congratulations!"
+                }</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {
+                            (mistakeCharLogs.length > 32) ?
+                                "You've made too many errors!" :
+                                `Your score is ${timeSpentMs} ms!`
+                        }
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" onClick={handleTryAgainClick}>
+                        Try Again
+                    </Button>
+                    <Button color="primary" component={NavLink} to={`/exercises/${exerciseId}`}>
+                        Go to exercise page
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Container>
     );
 };
