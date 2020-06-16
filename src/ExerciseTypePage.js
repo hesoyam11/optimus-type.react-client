@@ -1,8 +1,10 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
 import {
     Container,
+    Grid,
+    Paper,
     Typography
 } from "@material-ui/core";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
@@ -17,6 +19,9 @@ const useStyles = makeStyles(() =>
         fakeHide: {
             height: 0,
             opacity: 0
+        },
+        infoPaper: {
+            padding: 12
         }
     }),
 );
@@ -36,7 +41,7 @@ const useStyles = makeStyles(() =>
 export default function ExerciseTypePage(props) {
     const classes = useStyles();
 
-    const { exerciseId } = useParams();
+    const {exerciseId} = useParams();
 
     const authToken = props.authToken;
 
@@ -51,6 +56,10 @@ export default function ExerciseTypePage(props) {
     const [isAttemptSent, setIsAttemptSent] = useState(false);
 
     const text = exercise ? exercise['content'] : "";
+    const timeSpentMs = inputTimeLogs.length > 1 ?
+        inputTimeLogs[inputTimeLogs.length - 1] - inputTimeLogs[0] : 0;
+    const cpm = timeSpentMs > 0 ?
+        Math.round(inputTimeLogs.length / (timeSpentMs / (60 * 1000))) : 0;
 
     useEffect(() => {
         if (exercise === null) {
@@ -143,8 +152,7 @@ export default function ExerciseTypePage(props) {
                         });
                 }
             }
-        }
-        else {
+        } else {
             // Backspace pressing is the only way to correct mistakes.
             if (key === 'Backspace') {
                 // Do not backspace the already entered correct characters.
@@ -172,23 +180,39 @@ export default function ExerciseTypePage(props) {
     return (
         <Container component="main" maxWidth="md">{
             isAttemptSent ? <Typography>Okay.</Typography> :
-            exercise === null ? <Typography>Loading...</Typography> : <React.Fragment>
-                <input
-                    className={classes.fakeHide}
-                    ref={inputRef}
-                    onFocus={handleInputFocus}
-                    onBlur={handleInputBlur}
-                    onKeyDown={handleKeyDown}
-                />
-                <VirtualText
-                    text={text}
-                    currentIndex={currentIndex}
-                    currentMistakes={currentMistakes}
-                    isFocused={isInputFocused}
-                    handleInputFocus={setInputRef}
-                />
-                <VirtualKeyboard nextChar={text[currentIndex]} />
-            </React.Fragment>
+                exercise === null ? <Typography>Loading...</Typography> :
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <input
+                                className={classes.fakeHide}
+                                ref={inputRef}
+                                onFocus={handleInputFocus}
+                                onBlur={handleInputBlur}
+                                onKeyDown={handleKeyDown}
+                            />
+                            <VirtualText
+                                text={text}
+                                currentIndex={currentIndex}
+                                currentMistakes={currentMistakes}
+                                isFocused={isInputFocused}
+                                handleInputFocus={setInputRef}
+                            />
+                        </Grid>
+                        <Grid container spacing={2} item xs={12}>
+                            <Grid item xs={3}><Paper className={classes.infoPaper}>
+                                <Typography>CPM: {cpm}</Typography>
+                            </Paper></Grid>
+                            <Grid item xs={6}><Paper className={classes.infoPaper}>
+                                <Typography>Layout: en_US, American, QWERTY</Typography>
+                            </Paper></Grid>
+                            <Grid item xs={3}><Paper className={classes.infoPaper}>
+                                <Typography>Errors: {mistakeCharLogs.length}</Typography>
+                            </Paper></Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <VirtualKeyboard nextChar={text[currentIndex]}/>
+                        </Grid>
+                    </Grid>
         }</Container>
     );
 };
