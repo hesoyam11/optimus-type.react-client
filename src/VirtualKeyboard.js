@@ -95,20 +95,59 @@ export default function VirtualKeyboard(props) {
         ]]
     ]).get(layout);
 
-    const secondRowSquareChars = [
-        "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[{", "]}"
-    ];
+    const secondRowSquareChars = new Map([
+        ["enUSAQ", [
+            "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[{", "]}"
+        ]],
+        ["ukUAAЙ", [
+            "Й", "Ц", "У", "К", "Е", "Н", "Г", "Ш", "Щ", "З", "Х", "Ї"
+        ]],
+        ["ruRUAЙ", [
+            "Й", "Ц", "У", "К", "Е", "Н", "Г", "Ш", "Щ", "З", "Х", "Ъ"
+        ]]
+    ]).get(layout);
 
-    const thirdRowSquareChars = [
-        "A", "S", "D", "F", "G", "H", "J", "K", "L", ";:", "'\""
-    ];
+    const thirdRowSquareChars = new Map([
+        ["enUSAQ", [
+            "A", "S", "D", "F", "G", "H", "J", "K", "L", ";:", "'\""
+        ]],
+        ["ukUAAЙ", [
+            "Ф", "І", "В", "А", "П", "Р", "О", "Л", "Д", "Ж", "Є"
+        ]],
+        ["ruRUAЙ", [
+            "Ф", "Ы", "В", "А", "П", "Р", "О", "Л", "Д", "Ж", "Э"
+        ]]
+    ]).get(layout);
 
-    const fourthRowSquareChars = [
-        "Z", "X", "C", "V", "B", "N", "M", ",<", ".>", "/?"
-    ];
+    const fourthRowSquareChars = new Map([
+        ["enUSAQ", [
+            "Z", "X", "C", "V", "B", "N", "M", ",<", ".>", "/?"
+        ]],
+        ["ukUAAЙ", [
+            "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", ".,"
+        ]],
+        ["ruRUAЙ", [
+            "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", ".,"
+        ]]
+    ]).get(layout);
 
-    const leftShiftChars = "^&*()_+|YUIOP{}HJKL:\"NM<>?";
-    const rightShiftChars = "~!@#$%QWERTASDFGZXCVB";
+    const backslashKeyChars = new Map([
+        ["enUSAQ", "\\|"],
+        ["ukUAAЙ", "ґҐ"],
+        ["ruRUAЙ", "\\/"],
+    ]).get(layout);
+
+    const leftShiftChars = new Map([
+        ["enUSAQ", "^&*()_+|YUIOP{}HJKL:\"NM<>?"],
+        ["ukUAAЙ", ":?*()_+ҐНГШЩЗХЇРОЛДЖЄТЬБЮ,"],
+        ["ruRUAЙ", ":?*()_+/НГШЩЗХЪРОЛДЖЭТЬБЮ,"],
+    ]).get(layout);
+
+    const rightShiftChars = new Map([
+        ["enUSAQ", "~!@#$%QWERTASDFGZXCVB"],
+        ["ukUAAЙ", "ʼ!\"№;%ЙЦУКЕФІВАПЯЧСМИ"],
+        ["ruRUAЙ", "Ё!\"№;%ЙЦУКЕФЫВАПЯЧСМИ"],
+    ]).get(layout);
 
     return (
     <React.Fragment>
@@ -132,9 +171,15 @@ export default function VirtualKeyboard(props) {
                 createSquareKeyRects(secondRowSquareChars, 94, 62, nextChar)
             }
             <g transform={buildTranslateString(94 + 12 * 62, 62)}>
-                <rect x="3" y="3" rx="6" ry="6" width="68" height="56" className={classes.keyRect} />
-                <text x="15" y="24" className={classes.keyText}>|</text>
-                <text x="15" y="50" className={classes.keyText}>\</text>
+                <rect
+                    x="3" y="3" rx="6" ry="6" width="68" height="56"
+                    className={[
+                        classes.keyRect,
+                        backslashKeyChars.includes(nextChar) ? classes.hintKeyRect : ""
+                    ].join(" ")}
+                />
+                <text x="15" y="24" className={classes.keyText}>{backslashKeyChars[1]}</text>
+                <text x="15" y="50" className={classes.keyText}>{backslashKeyChars[0]}</text>
             </g>
 
             <g transform={buildTranslateString(0, 2 * 62)}>
