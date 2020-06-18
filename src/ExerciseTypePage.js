@@ -203,6 +203,7 @@ export default function ExerciseTypePage(props) {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <input
+                                autoFocus
                                 className={classes.fakeHide}
                                 ref={inputRef}
                                 onFocus={handleInputFocus}

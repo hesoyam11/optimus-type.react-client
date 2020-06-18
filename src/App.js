@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import {Switch, Route, Redirect} from 'react-router-dom';
+import {makeStyles} from '@material-ui/core/styles';
 import {
     CssBaseline,
     Typography
@@ -16,6 +16,7 @@ import ExerciseDetailPage from "./ExerciseDetailPage";
 import ExerciseTypePage from "./ExerciseTypePage";
 import UserListPage from "./UserListPage";
 import UserDetailPage from "./UserDetailPage";
+import ExerciseCreatePage from "./ExerciseCreatePage";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,9 +41,9 @@ function App() {
     const classes = useStyles();
 
     const [authToken, setAuthToken] = useLocalStorage('authToken', null);
-    const [ , setUserId] = useLocalStorage('userId', null);
+    const [, setUserId] = useLocalStorage('userId', null);
     const [username, setUsername] = useLocalStorage('username', null);
-    const [ , setUserEmail] = useLocalStorage('userEmail', null);
+    const [, setUserEmail] = useLocalStorage('userEmail', null);
 
     const isAuthenticated = (authToken !== null);
 
@@ -79,41 +80,44 @@ function App() {
 
     return (
         <div className={classes.root}>
-            <CssBaseline />
+            <CssBaseline/>
             <NavigationBar authToken={authToken} username={username} doSignOut={doSignOut}/>
             <main className={classes.content}>
-                <div className={classes.toolbar} />
+                <div className={classes.toolbar}/>
                 <Switch>
                     <Route exact path="/">
                         <Typography paragraph>Home page.</Typography>
                     </Route>
                     <Route exact path="/sign-in">
-                        {isAuthenticated ? <Redirect to="/" /> : <SignInPage doSignIn={doSignIn} />}
+                        {isAuthenticated ? <Redirect to="/"/> : <SignInPage doSignIn={doSignIn}/>}
                     </Route>
                     <Route exact path="/sign-up">
-                        {isAuthenticated ? <Redirect to="/" /> : <SignUpPage />}
+                        {isAuthenticated ? <Redirect to="/"/> : <SignUpPage/>}
                     </Route>
                     <Route exact path="/profile">
                         {
                             isAuthenticated ?
                                 <Typography paragraph>Profile page.</Typography> :
-                                <Redirect to="/sign-in" />
+                                <Redirect to="/sign-in"/>
                         }
                     </Route>
                     <Route exact path="/exercises">
-                        <ExerciseListPage />
+                        <ExerciseListPage isAuthenticated={isAuthenticated}/>
+                    </Route>
+                    <Route exact path="/exercises/create">
+                        {isAuthenticated ? <ExerciseCreatePage authToken={authToken}/> : <Redirect to="/sign-in"/>}
                     </Route>
                     <Route exact path="/exercises/:exerciseId">
-                        <ExerciseDetailPage />
+                        <ExerciseDetailPage/>
                     </Route>
                     <Route exact path="/exercises/:exerciseId/type">
-                        <ExerciseTypePage authToken={authToken} />
+                        <ExerciseTypePage authToken={authToken}/>
                     </Route>
                     <Route exact path="/users">
-                        <UserListPage />
+                        <UserListPage/>
                     </Route>
                     <Route exact path="/users/:userId">
-                        <UserDetailPage />
+                        <UserDetailPage/>
                     </Route>
                     <Route path="/">
                         <Typography>Page Not Found!</Typography>
