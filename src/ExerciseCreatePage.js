@@ -1,9 +1,11 @@
 import axios from 'axios';
 import React, {useState} from 'react';
+import {Redirect} from "react-router-dom";
 import {
     Button,
     Container,
     CssBaseline,
+    FormHelperText,
     Grid,
     MenuItem,
     TextField,
@@ -14,15 +16,15 @@ import {makeStyles} from "@material-ui/core/styles";
 
 const locales = [
     {
-        value: 'en_US',
+        value: 'enUS',
         label: 'en_US',
     },
     {
-        value: 'uk_UA',
+        value: 'ukUA',
         label: 'uk_UA',
     },
     {
-        value: 'ru_RU',
+        value: 'ruRU',
         label: 'ru_RU',
     }
 ];
@@ -45,14 +47,61 @@ export default function ExerciseCreatePage(props) {
 
     const authToken = props.authToken;
 
-    const [locale, setLocale] = useState("en_US");
+    const [errorResponseData, setErrorResponseData] = useState(null);
+    const [createdExerciseId, setCreatedExerciseId] = useState(null);
+
+    const [title, setTitle] = useState("");
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value);
+    };
+
+    const [locale, setLocale] = useState("enUS");
     const handleLocaleChange = (event) => {
         setLocale(event.target.value);
     };
 
+    const [content, setContent] = useState("");
+    const handleContentChange = (event) => {
+        setContent(event.target.value);
+    };
+
+    const handleSubmitClick = (event) => {
+        event.preventDefault();
+
+        axios.post(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/`,
+            {title, locale, content},
+            {
+                headers: {
+                    "Authorization": `Token ${authToken}`
+                }
+            }
+        )
+            .then(res => {
+                setCreatedExerciseId(res.data['id']);
+            })
+            .catch(error => {
+                if (!error.response) {
+                    alert("No response from server.");
+                }
+                else if (error.response.status !== 400) {
+                    alert(error.response.data);
+                }
+                else {
+                    setErrorResponseData(error.response.data);
+                }
+            });
+    };
+
+    if (createdExerciseId !== null) {
+        return (
+            <Redirect to={`/exercises/${createdExerciseId}`} />
+        );
+    }
+
     return (
         <Container component="main" maxWidth="md">
-            <CssBaseline />
+            <CssBaseline/>
             <div className={classes.paper}>
                 <Typography component="h1" variant="h5">
                     New Exercise
@@ -65,15 +114,21 @@ export default function ExerciseCreatePage(props) {
                                 id="title"
                                 name="title"
                                 label="Title"
+                                value={title}
+                                onChange={handleTitleChange}
                                 variant="outlined"
                                 fullWidth
                                 autoFocus
+                                inputProps={{
+                                    maxLength: 128
+                                }}
                             />
                         </Grid>
                         <Grid item md={4} xs={12}>
                             <TextField
-                                id="locale"
                                 select
+                                id="locale"
+                                name="locale"
                                 label="Select language (locale)"
                                 value={locale}
                                 onChange={handleLocaleChange}
@@ -90,12 +145,13 @@ export default function ExerciseCreatePage(props) {
                         <Grid item xs={12}>
                             <TextField
                                 required
+                                multiline rows={10}
                                 id="content"
                                 name="content"
                                 label="Content"
+                                value={content}
+                                onChange={handleContentChange}
                                 variant="outlined"
-                                multiline
-                                rows={10}
                                 fullWidth
                                 inputProps={{
                                     style: {
@@ -112,27 +168,29 @@ export default function ExerciseCreatePage(props) {
                                 variant="contained"
                                 color="primary"
                                 className={classes.submit}
-                                // onClick={handleSignInClick}
+                                onClick={handleSubmitClick}
                             >
                                 Create
                             </Button>
                         </Grid>
                     </Grid>
-                    {/*{*/}
-                    {/*    errorResponseData ?*/}
-                    {/*        errorResponseData['nonFieldErrors'].map(*/}
-                    {/*            (errorText) => (*/}
-                    {/*                <FormHelperText*/}
-                    {/*                    key={errorText}*/}
-                    {/*                    error*/}
-                    {/*                    variant="outlined"*/}
-                    {/*                >*/}
-                    {/*                    {errorText}*/}
-                    {/*                </FormHelperText>*/}
-                    {/*            )*/}
-                    {/*        ) :*/}
-                    {/*        null*/}
-                    {/*}*/}
+                    {
+                        errorResponseData && errorResponseData['nonFieldErrors'] ?
+                            errorResponseData['nonFieldErrors'].map(
+                                (errorText) => (
+                                    <FormHelperText
+                                        key={errorText}
+                                        error
+                                        variant="outlined"
+                                    >
+                                        {errorText}
+                                    </FormHelperText>
+                                )
+                            ) :
+                            errorResponseData ?
+                                <FormHelperText>Unexpected validation error.</FormHelperText> :
+                                null
+                    }
                 </form>
             </div>
         </Container>
