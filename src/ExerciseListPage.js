@@ -4,7 +4,7 @@ import {NavLink} from "react-router-dom";
 import {
     Button,
     Container,
-    Grid,
+    Grid, MenuItem,
     TextField,
     Typography
 } from "@material-ui/core";
@@ -14,6 +14,44 @@ import SearchIcon from '@material-ui/icons/Search';
 import ExerciseItemPaper from "./ExerciseItemPaper";
 
 
+const locales = [
+    {
+        value: 'all',
+        label: 'All'
+    },
+    {
+        value: 'enUS',
+        label: 'en_US',
+    },
+    {
+        value: 'ukUA',
+        label: 'uk_UA',
+    },
+    {
+        value: 'ruRU',
+        label: 'ru_RU',
+    }
+];
+
+const orderings = [
+    {
+        value: 'created_at',
+        label: 'Creation time ASC'
+    },
+    {
+        value: '-created_at',
+        label: 'Creation time DESC'
+    },
+    {
+        value: 'title',
+        label: 'Title ASC'
+    },
+    {
+        value: '-title',
+        label: 'Title DESC'
+    }
+];
+
 export default function ExerciseListPage(props) {
     const isAuthenticated = props.isAuthenticated;
 
@@ -22,24 +60,34 @@ export default function ExerciseListPage(props) {
         setTitleSearchTerm(event.target.value);
     };
 
+    const [locale, setLocale] = useState('all');
+    const handleLocaleChange = (event) => {
+        setLocale(event.target.value);
+    };
+
+    const [ordering, setOrdering] = useState('-created_at');
+    const handleOrderingChange = (event) => {
+        setOrdering(event.target.value);
+    }
+
     const [exercises, setExercises] = useState(null);
     const [nextPageLink, setNextPageLink] = useState(null);
 
-    useEffect(() => {
-        if (exercises === null) {
-            handleSearchClick();
-        }
-    });
-
-    const handleSearchClick = () => {
-        const queryParams = {};
+    const updateSearchResults = () => {
+        const queryParams = {
+            ordering: ordering
+        };
 
         if (titleSearchTerm !== "") {
             queryParams['search'] = titleSearchTerm;
         }
 
+        if (locale !== "all") {
+            queryParams['locale'] = locale;
+        }
+
         axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises`,
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/`,
             {
                 params: queryParams
             }
@@ -52,6 +100,18 @@ export default function ExerciseListPage(props) {
                 alert("An error happened while loading exercises.");
                 console.log(error);
             });
+    };
+
+    useEffect(() => {
+        if (exercises === null) {
+            updateSearchResults();
+        }
+    });
+
+    const handleSearchClick = (event) => {
+        event.preventDefault();
+
+        updateSearchResults();
     };
 
     const handleShowMoreClick = () => {
@@ -78,6 +138,7 @@ export default function ExerciseListPage(props) {
                                 <Grid item xs={10}>
                                     <TextField
                                         id="search-by-title"
+                                        name="search-by-title"
                                         label="Search by title"
                                         type="search"
                                         value={titleSearchTerm}
@@ -88,6 +149,7 @@ export default function ExerciseListPage(props) {
                                 </Grid>
                                 <Grid item xs={2}>
                                     <Button
+                                        type="submit"
                                         variant="contained"
                                         color="primary"
                                         startIcon={<SearchIcon/>}
@@ -101,6 +163,42 @@ export default function ExerciseListPage(props) {
                                         Search
                                     </Button>
                                 </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        select
+                                        id="locale"
+                                        name="locale"
+                                        label="Filter by language (locale)"
+                                        value={locale}
+                                        onChange={handleLocaleChange}
+                                        variant="outlined"
+                                        fullWidth
+                                    >
+                                        {locales.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        select
+                                        id="order-by"
+                                        name="order-by"
+                                        label="Order results by"
+                                        value={ordering}
+                                        onChange={handleOrderingChange}
+                                        variant="outlined"
+                                        fullWidth
+                                    >
+                                        {orderings.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Grid>
                             </Grid>
                         </form>
                     </Grid>
@@ -112,17 +210,22 @@ export default function ExerciseListPage(props) {
                                 startIcon={<AddIcon/>}
                                 component={NavLink}
                                 to="/exercises/create"
+                                fullWidth
                             >
                                 Create exercise
                             </Button>
                         </Grid>
                     }
                     {
-                        exercises.map((item) => (
-                            <Grid key={item['id']} item xs={12} md={6}>
-                                <ExerciseItemPaper shortifyContent exercise={item}/>
+                        exercises.length > 0 ?
+                            exercises.map((item) => (
+                                <Grid key={item['id']} item xs={12} md={6}>
+                                    <ExerciseItemPaper shortifyContent exercise={item}/>
+                                </Grid>
+                            )) :
+                            <Grid item xs={12}>
+                                <Typography >No results found.</Typography>
                             </Grid>
-                        ))
                     }
                     {
                         nextPageLink &&
