@@ -4,7 +4,10 @@ import {NavLink} from "react-router-dom";
 import {
     Button,
     Container,
-    Grid, MenuItem,
+    Checkbox,
+    FormControlLabel,
+    Grid,
+    MenuItem,
     TextField,
     Typography
 } from "@material-ui/core";
@@ -62,6 +65,7 @@ const orderings = [
 
 export default function ExerciseListPage(props) {
     const isAuthenticated = props.isAuthenticated;
+    const userId = props.userId;
 
     const [titleSearchTerm, setTitleSearchTerm] = useState("");
     const handleTitleSearchTermChange = (event) => {
@@ -78,6 +82,11 @@ export default function ExerciseListPage(props) {
         setOrdering(event.target.value);
     }
 
+    const [onlyCreatedByMe, setOnlyCreatedByMe] = useState(false);
+    const handleOnlyCreatedByMeChange = (event) => {
+        setOnlyCreatedByMe(event.target.checked);
+    };
+
     const [exercises, setExercises] = useState(null);
     const [nextPageLink, setNextPageLink] = useState(null);
 
@@ -92,6 +101,10 @@ export default function ExerciseListPage(props) {
 
         if (locale !== "all") {
             queryParams['locale'] = locale;
+        }
+
+        if (onlyCreatedByMe) {
+            queryParams['creator'] = userId;
         }
 
         axios.get(
@@ -171,7 +184,7 @@ export default function ExerciseListPage(props) {
                                         Search
                                     </Button>
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={5}>
                                     <TextField
                                         select
                                         id="locale"
@@ -189,7 +202,7 @@ export default function ExerciseListPage(props) {
                                         ))}
                                     </TextField>
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={5}>
                                     <TextField
                                         select
                                         id="order-by"
@@ -206,6 +219,20 @@ export default function ExerciseListPage(props) {
                                             </MenuItem>
                                         ))}
                                     </TextField>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                disabled={!isAuthenticated}
+                                                checked={isAuthenticated && onlyCreatedByMe}
+                                                onChange={handleOnlyCreatedByMeChange}
+                                                name="only-created-by-me"
+                                                color="primary"
+                                            />
+                                        }
+                                        label="Show only created by me"
+                                    />
                                 </Grid>
                             </Grid>
                         </form>

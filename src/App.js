@@ -41,7 +41,7 @@ function App() {
     const classes = useStyles();
 
     const [authToken, setAuthToken] = useLocalStorage('authToken', null);
-    const [, setUserId] = useLocalStorage('userId', null);
+    const [userId, setUserId] = useLocalStorage('userId', null);
     const [username, setUsername] = useLocalStorage('username', null);
     const [, setUserEmail] = useLocalStorage('userEmail', null);
 
@@ -102,7 +102,7 @@ function App() {
                         }
                     </Route>
                     <Route exact path="/exercises">
-                        <ExerciseListPage isAuthenticated={isAuthenticated}/>
+                        <ExerciseListPage isAuthenticated={isAuthenticated} userId={userId}/>
                     </Route>
                     <Route exact path="/exercises/create">
                         {isAuthenticated ? <ExerciseCreatePage authToken={authToken}/> : <Redirect to="/sign-in"/>}
