@@ -9,6 +9,7 @@ import {
 
 import useLocalStorage from "./utils/useLocalStorage";
 import NavigationBar from "./NavigationBar";
+import HomePage from "./HomePage";
 import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
 import ExerciseListPage from "./ExerciseListPage";
@@ -86,7 +87,7 @@ function App() {
                 <div className={classes.toolbar}/>
                 <Switch>
                     <Route exact path="/">
-                        <Typography paragraph>Home page.</Typography>
+                        <HomePage />
                     </Route>
                     <Route exact path="/sign-in">
                         {isAuthenticated ? <Redirect to="/"/> : <SignInPage doSignIn={doSignIn}/>}
