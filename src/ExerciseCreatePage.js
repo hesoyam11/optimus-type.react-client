@@ -157,7 +157,8 @@ export default function ExerciseCreatePage(props) {
                                     style: {
                                         fontFamily: "Monospace",
                                         fontSize: 18
-                                    }
+                                    },
+                                    maxLength: 1024
                                 }}
                             />
                         </Grid>
