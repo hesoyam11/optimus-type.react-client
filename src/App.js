@@ -108,7 +108,7 @@ function App() {
                         {isAuthenticated ? <ExerciseCreatePage authToken={authToken}/> : <Redirect to="/sign-in"/>}
                     </Route>
                     <Route exact path="/exercises/:exerciseId">
-                        <ExerciseDetailPage/>
+                        <ExerciseDetailPage authToken={authToken} userId={userId} />
                     </Route>
                     <Route exact path="/exercises/:exerciseId/type">
                         <ExerciseTypePage authToken={authToken}/>
