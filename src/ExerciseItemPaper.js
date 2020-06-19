@@ -35,6 +35,9 @@ export default function ExerciseItemPaper(props) {
                 Locale: {localeFromInternalToHumanValue[exercise['locale']]}
             </Typography>
             <Typography color="textSecondary">
+                Popularity: {exercise['attemptCounter']}
+            </Typography>
+            <Typography color="textSecondary">
                 Created by <NavLink to={`/users/${exercise['creator']['id']}`}>
                     {exercise['creator']['username']}
                 </NavLink> on {(new Date(exercise['createdAt'])).toDateString()}

@@ -35,20 +35,28 @@ const locales = [
 
 const orderings = [
     {
-        value: 'created_at',
-        label: 'Creation time ASC'
-    },
-    {
         value: '-created_at',
         label: 'Creation time DESC'
     },
     {
-        value: 'title',
-        label: 'Title ASC'
+        value: 'created_at',
+        label: 'Creation time ASC'
+    },
+    {
+        value: '-attempt_counter',
+        label: 'Popularity (attempts) DESC'
+    },
+    {
+        value: 'attempt_counter',
+        label: 'Popularity (attempts) ASC'
     },
     {
         value: '-title',
         label: 'Title DESC'
+    },
+    {
+        value: 'title',
+        label: 'Title ASC'
     }
 ];
 
