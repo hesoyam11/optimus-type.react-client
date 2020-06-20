@@ -173,15 +173,19 @@ export default function ExerciseTypePage(props) {
             }
             // Else treat the character as an input character.
             else if (currentIndex + currentMistakes.length < text.length) {
+                const currentMistakesLength = currentMistakes.length;
                 setCurrentMistakes(
                     currentMistakes.concat(key)
                 );
-                setMistakeTimeLogs(
-                    mistakeTimeLogs.concat((new Date()).getTime())
-                );
-                setMistakeCharLogs(
-                    mistakeCharLogs.concat(key)
-                );
+                // If this is the first mistake in the row.
+                if (currentMistakesLength === 0) {
+                    setMistakeTimeLogs(
+                        mistakeTimeLogs.concat((new Date()).getTime())
+                    );
+                    setMistakeCharLogs(
+                        mistakeCharLogs.concat(key)
+                    );
+                }
             }
         }
     };
