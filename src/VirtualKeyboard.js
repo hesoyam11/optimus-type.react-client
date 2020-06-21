@@ -76,14 +76,22 @@ export default function VirtualKeyboard(props) {
     const nextChar = props.nextChar; // Either a character or `undefined`.
     const layout = props.layout;
 
-    if (['enUSAQ', 'ukUAAЙ', 'ruRUAЙ'].indexOf(layout) === -1) {
+    if (['enUSAQ', 'enUSAD', 'enUSAC', 'ukUAAЙ', 'ruRUAЙ'].indexOf(layout) === -1) {
         return <Typography>Unrecognised layout.</Typography>;
     }
 
     const firstRowSquareChars = new Map([
         ["enUSAQ", [
             "`~", "1!", "2@", "3#", "4$", "5%", "6^",
-            "7&", "8*", "9(", "0)", "-_", "+="
+            "7&", "8*", "9(", "0)", "-_", "=+"
+        ]],
+        ["enUSAD", [
+            "`~", "1!", "2@", "3#", "4$", "5%", "6^",
+            "7&", "8*", "9(", "0)", "[{", "]}"
+        ]],
+        ["enUSAC", [
+            "`~", "1!", "2@", "3#", "4$", "5%", "6^",
+            "7&", "8*", "9(", "0)", "-_", "=+"
         ]],
         ["ukUAAЙ", [
             "'ʼ", "1!", "2\"", "3№", "4;", "5%", "6:",
@@ -99,6 +107,12 @@ export default function VirtualKeyboard(props) {
         ["enUSAQ", [
             "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[{", "]}"
         ]],
+        ["enUSAD", [
+            "'\"", ",<", ".>", "P", "Y", "F", "G", "C", "R", "L", "/?", "=+"
+        ]],
+        ["enUSAC", [
+            "Q", "W", "F", "P", "G", "J", "L", "U", "Y", ";:", "[{", "]}"
+        ]],
         ["ukUAAЙ", [
             "Й", "Ц", "У", "К", "Е", "Н", "Г", "Ш", "Щ", "З", "Х", "Ї"
         ]],
@@ -110,6 +124,12 @@ export default function VirtualKeyboard(props) {
     const thirdRowSquareChars = new Map([
         ["enUSAQ", [
             "A", "S", "D", "F", "G", "H", "J", "K", "L", ";:", "'\""
+        ]],
+        ["enUSAD", [
+            "A", "O", "E", "U", "I", "D", "H", "T", "N", "S", "-_"
+        ]],
+        ["enUSAC", [
+            "A", "R", "S", "T", "D", "H", "N", "E", "I", "O", "'\""
         ]],
         ["ukUAAЙ", [
             "Ф", "І", "В", "А", "П", "Р", "О", "Л", "Д", "Ж", "Є"
@@ -123,6 +143,12 @@ export default function VirtualKeyboard(props) {
         ["enUSAQ", [
             "Z", "X", "C", "V", "B", "N", "M", ",<", ".>", "/?"
         ]],
+        ["enUSAD", [
+            ";:", "Q", "J", "K", "X", "B", "M", "W", "V", "Z"
+        ]],
+        ["enUSAC", [
+            "Z", "X", "C", "V", "B", "K", "M", ",<", ".>", "/?"
+        ]],
         ["ukUAAЙ", [
             "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", ".,"
         ]],
@@ -133,18 +159,24 @@ export default function VirtualKeyboard(props) {
 
     const backslashKeyChars = new Map([
         ["enUSAQ", "\\|"],
+        ["enUSAD", "\\|"],
+        ["enUSAC", "\\|"],
         ["ukUAAЙ", "ґҐ"],
         ["ruRUAЙ", "\\/"],
     ]).get(layout);
 
     const leftShiftChars = new Map([
         ["enUSAQ", "^&*()_+|YUIOP{}HJKL:\"NM<>?"],
+        ["enUSAD", "^&*(){}|FGCRL?+DHTNS_BMWVZ"],
+        ["enUSAC", "^&*()_+|JLUY:{}HNEIO\"KM<>?"],
         ["ukUAAЙ", ":?*()_+ҐНГШЩЗХЇРОЛДЖЄТЬБЮ,"],
         ["ruRUAЙ", ":?*()_+/НГШЩЗХЪРОЛДЖЭТЬБЮ,"],
     ]).get(layout);
 
     const rightShiftChars = new Map([
         ["enUSAQ", "~!@#$%QWERTASDFGZXCVB"],
+        ["enUSAD", "~!@#$%\"<>PYAOEUI:QJKX"],
+        ["enUSAC", "~!@#$%QWFPGARSTDZXCVB"],
         ["ukUAAЙ", "ʼ!\"№;%ЙЦУКЕФІВАПЯЧСМИ"],
         ["ruRUAЙ", "Ё!\"№;%ЙЦУКЕФЫВАПЯЧСМИ"],
     ]).get(layout);

@@ -10,8 +10,12 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
+    FormControl,
     Grid,
+    InputLabel,
+    MenuItem,
     Paper,
+    Select,
     Slide,
     Typography
 } from "@material-ui/core";
@@ -29,7 +33,7 @@ const useStyles = makeStyles(() =>
             opacity: 0
         },
         infoPaper: {
-            padding: 12
+            padding: 16
         }
     }),
 );
@@ -53,16 +57,22 @@ export default function ExerciseTypePage(props) {
     const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
 
     const text = exercise ? exercise['content'] : "";
-    const layout = exercise ? new Map([
-            ["enUS", "enUSAQ"],
-            ["ukUA", "ukUAAЙ"],
-            ["ruRU", "ruRUAЙ"]
-        ]).get(exercise['locale']) : undefined;
-    const layoutDesc = layout ? new Map([
-            ["enUSAQ", "en_US, American, QWERTY"],
-            ["ukUAAЙ", "uk_UA, American, ЙЦУКЕН"],
-            ["ruRUAЙ", "ru_RU, American, ЙЦУКЕН"]
-        ]).get(layout) : "Unknown";
+    const layoutOptions = exercise ? new Map([
+        ["enUS", ["enUSAQ", "enUSAD", "enUSAC"]],
+        ["ukUA", ["ukUAAЙ"]],
+        ["ruRU", ["ruRUAЙ"]]
+    ]).get(exercise['locale']) : [];
+
+    const [layout, setLayout] = useState(undefined);
+    const handleLayoutChange = event => setLayout(event.target.value);
+
+    const layoutDescriptions = new Map([
+        ["enUSAQ", "en_US, American, QWERTY"],
+        ["enUSAD", "en_US, American, Dvorak"],
+        ["enUSAC", "en_US, American, Colemak"],
+        ["ukUAAЙ", "uk_UA, American, ЙЦУКЕН"],
+        ["ruRUAЙ", "ru_RU, American, ЙЦУКЕН"]
+    ]);
     const timeSpentMs = inputTimeLogs.length > 1 ?
         inputTimeLogs[inputTimeLogs.length - 1] - inputTimeLogs[0] : 0;
     const cpm = timeSpentMs > 0 ?
@@ -77,6 +87,14 @@ export default function ExerciseTypePage(props) {
                 .then(res => {
                     res.data['content'] = res.data['content'].replace('\r', '\n');
                     setExercise(res.data);
+                    const locale = res.data['locale'];
+                    setLayout(
+                        new Map([
+                            ["enUS", "enUSAQ"],
+                            ["ukUA", "ukUAAЙ"],
+                            ["ruRU", "ruRUAЙ"]
+                        ]).get(locale)
+                    );
                 })
                 .catch(error => {
                     alert("An error happened while loading the exercise.");
@@ -143,8 +161,7 @@ export default function ExerciseTypePage(props) {
                     axios.post(
                         `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/attempts/`,
                         {
-                            exerciseId,
-                            layout: "enUSAQ",
+                            exerciseId, layout,
                             inputTimeLogs: formattedInputTimeLogs,
                             mistakeTimeLogs: formattedMistakeTimeLogs,
                             mistakeCharLogs
@@ -226,9 +243,30 @@ export default function ExerciseTypePage(props) {
                             <Grid item xs={3}><Paper className={classes.infoPaper}>
                                 <Typography>CPM: {cpm}</Typography>
                             </Paper></Grid>
-                            <Grid item xs={6}><Paper className={classes.infoPaper}>
-                                <Typography>Layout: {layoutDesc}</Typography>
-                            </Paper></Grid>
+                            <Grid item xs={6}>
+                                {
+                                    layout ? <FormControl
+                                            disabled={(currentIndex !== 0)}
+                                            variant="outlined" fullWidth
+                                        >
+                                            <InputLabel id="layout-select-label">Layout</InputLabel>
+                                            <Select
+                                                labelId="layout-select-label"
+                                                id="layout-select"
+                                                value={layout}
+                                                onChange={handleLayoutChange}
+                                                label="Layout"
+                                            >
+                                                {
+                                                    layoutOptions.map(value => <MenuItem value={value}>
+                                                        {layoutDescriptions.get(value)}
+                                                    </MenuItem>)
+                                                }
+                                            </Select>
+                                        </FormControl> :
+                                        <Typography>Loading...</Typography>
+                                }
+                            </Grid>
                             <Grid item xs={3}><Paper className={classes.infoPaper}>
                                 <Typography>Errors: {mistakeCharLogs.length}</Typography>
                             </Paper></Grid>
