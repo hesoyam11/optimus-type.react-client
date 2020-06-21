@@ -98,7 +98,7 @@ function App() {
                     <Route exact path="/profile">
                         {
                             isAuthenticated ?
-                                <Typography paragraph>Profile page.</Typography> :
+                                <UserDetailPage userId={userId} /> :
                                 <Redirect to="/sign-in"/>
                         }
                     </Route>

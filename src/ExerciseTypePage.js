@@ -21,6 +21,7 @@ import {
 } from "@material-ui/core";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 
+import layoutDescriptions from "./utils/layoutUtils";
 import useFocus from "./utils/useFocus";
 import VirtualText from "./VirtualText";
 import VirtualKeyboard from "./VirtualKeyboard";
@@ -66,13 +67,6 @@ export default function ExerciseTypePage(props) {
     const [layout, setLayout] = useState(undefined);
     const handleLayoutChange = event => setLayout(event.target.value);
 
-    const layoutDescriptions = new Map([
-        ["enUSAQ", "en_US, American, QWERTY"],
-        ["enUSAD", "en_US, American, Dvorak"],
-        ["enUSAC", "en_US, American, Colemak"],
-        ["ukUAAЙ", "uk_UA, American, ЙЦУКЕН"],
-        ["ruRUAЙ", "ru_RU, American, ЙЦУКЕН"]
-    ]);
     const timeSpentMs = inputTimeLogs.length > 1 ?
         inputTimeLogs[inputTimeLogs.length - 1] - inputTimeLogs[0] : 0;
     const cpm = timeSpentMs > 0 ?
