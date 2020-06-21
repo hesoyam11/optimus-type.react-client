@@ -232,6 +232,18 @@ export default function VirtualKeyboard(props) {
                 <text x="15" y="40" className={classes.keyText}>Enter</text>
             </g>
 
+            { /* Dashes under the F and J keys. */ }
+            <line
+                transform={buildTranslateString(115 + 3 * 62, 2 * 62)}
+                x1="15" y1="52" x2={62 - 15} y2="52"
+                style={{stroke: "black", strokeWidth: 2}}
+            />
+            <line
+                transform={buildTranslateString(115 + 6 * 62, 2 * 62)}
+                x1="15" y1="52" x2={62 - 15} y2="52"
+                style={{stroke: "black", strokeWidth: 2}}
+            />
+
             <g transform={buildTranslateString(0, 3 * 62)}>
                 <rect
                     x="3" y="3" rx="6" ry="6" width="140" height="56"

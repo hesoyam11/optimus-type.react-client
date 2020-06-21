@@ -233,7 +233,7 @@ export default function ExerciseTypePage(props) {
                                 handleInputFocus={setInputRef}
                             />
                         </Grid>
-                        <Grid container spacing={2} item xs={12}>
+                        <Grid container spacing={2} item>
                             <Grid item xs={3}><Paper className={classes.infoPaper}>
                                 <Typography>CPM: {cpm}</Typography>
                             </Paper></Grid>
@@ -252,7 +252,7 @@ export default function ExerciseTypePage(props) {
                                                 label="Layout"
                                             >
                                                 {
-                                                    layoutOptions.map(value => <MenuItem value={value}>
+                                                    layoutOptions.map(value => <MenuItem key={value} value={value}>
                                                         {layoutDescriptions.get(value)}
                                                     </MenuItem>)
                                                 }
