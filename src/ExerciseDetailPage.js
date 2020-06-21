@@ -41,14 +41,18 @@ export default function ExerciseDetailPage(props) {
     const userId = props.userId;
 
     const [exercise, setExercise] = useState(null);
+    const [isExerciseRequestSent, setIsExerciseRequestSent] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
     const [fastestAttempts, setFastestAttempts] = useState(null);
+    const [isFastestAttemptsRequestSent, setIsFastestAttemptsRequestSent] = useState(false);
     const [myLatestAttempts, setMyLatestAttempts] = useState(null);
+    const [isMyLatestAttemptsRequestSent, setIsMyLatestAttemptsRequestSent] = useState(false);
 
     useEffect(() => {
-        if (exercise === null) {
+        if (!isExerciseRequestSent) {
+            setIsExerciseRequestSent(true);
             axios.get(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/exercises/${exerciseId}/`
             )
@@ -60,10 +64,11 @@ export default function ExerciseDetailPage(props) {
                     console.log(error);
                 })
         }
-    });
+    }, [isExerciseRequestSent, exerciseId]);
 
     useEffect(() => {
-        if (fastestAttempts === null) {
+        if (!isFastestAttemptsRequestSent) {
+            setIsFastestAttemptsRequestSent(true);
             axios.get(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/fastest-attempts/`,
                 {
@@ -81,14 +86,15 @@ export default function ExerciseDetailPage(props) {
                     console.log(error);
                 });
         }
-    });
+    }, [isFastestAttemptsRequestSent, exerciseId]);
 
     useEffect(() => {
         if (authToken === null) {
             return;
         }
 
-        if (myLatestAttempts === null) {
+        if (!isMyLatestAttemptsRequestSent) {
+            setIsMyLatestAttemptsRequestSent(true);
             axios.get(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/attempts/`,
                 {
@@ -107,7 +113,7 @@ export default function ExerciseDetailPage(props) {
                     console.log(error);
                 });
         }
-    });
+    }, [authToken, isMyLatestAttemptsRequestSent, exerciseId, userId]);
 
     const handleDeleteClick = () => {
         setOpenDeleteDialog(true);
@@ -233,15 +239,15 @@ export default function ExerciseDetailPage(props) {
                                     <Table className={classes.table} aria-label="simple table">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>User</TableCell>
+                                                <TableCell>Mistakes</TableCell>
                                                 <TableCell align="right">Score&nbsp;(ms)</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {myLatestAttempts.map((row) => (
-                                                <TableRow key={row['creator']['username']}>
+                                                <TableRow key={row['createdAt']}>
                                                     <TableCell component="th" scope="row">
-                                                        {row['creator']['username']}
+                                                        {row['mistakes']}
                                                     </TableCell>
                                                     <TableCell align="right">{row['timeSpent']}</TableCell>
                                                 </TableRow>

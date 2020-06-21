@@ -33,10 +33,13 @@ export default function UserDetailPage(props) {
     }
 
     const [user, setUser] = useState(null);
+    const [isGetUserRequestSent, setIsGetUserRequestSent] = useState(false);
     const [layoutStats, setLayoutStats] = useState(null);
+    const [isGetLayoutStatsRequestSent, setIsGetLayoutStatsRequestSent] = useState(false);
 
     useEffect(() => {
-        if (user === null) {
+        if (!isGetUserRequestSent) {
+            setIsGetUserRequestSent(true);
             axios.get(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/users/${userId}/`
             )
@@ -48,10 +51,11 @@ export default function UserDetailPage(props) {
                     console.log(error);
                 })
         }
-    });
+    }, [isGetUserRequestSent, userId]);
 
     useEffect(() => {
-        if (layoutStats === null) {
+        if (!isGetLayoutStatsRequestSent) {
+            setIsGetLayoutStatsRequestSent(true);
             axios.get(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/v1.0/layout-statistics/`,
                 {
@@ -69,7 +73,7 @@ export default function UserDetailPage(props) {
                     console.log(error);
                 });
         }
-    });
+    }, [isGetLayoutStatsRequestSent, userId]);
 
     return (
         <Container component="main" maxWidth="md">{
