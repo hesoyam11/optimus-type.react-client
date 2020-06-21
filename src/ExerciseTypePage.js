@@ -46,6 +46,8 @@ export default function ExerciseTypePage(props) {
 
     const authToken = props.authToken;
 
+    const [pressedChar, setPressedChar] = useState(null);
+
     const [exercise, setExercise] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentMistakes, setCurrentMistakes] = useState([]);
@@ -132,9 +134,12 @@ export default function ExerciseTypePage(props) {
             return;
         }
 
+        setPressedChar(key);
+
         if (currentMistakes.length === 0 && key === text[currentIndex]) {
             const newCurrentIndex = currentIndex + 1;
             const newInputTimeLogs = inputTimeLogs.concat((new Date()).getTime());
+            setPressedChar(null);
             setCurrentIndex(newCurrentIndex);
             setInputTimeLogs(newInputTimeLogs);
 
@@ -201,6 +206,10 @@ export default function ExerciseTypePage(props) {
         }
     };
 
+    const handleKeyUp = () => {
+        setPressedChar(null);
+    };
+
     const handleTryAgainClick = () => {
         setCurrentIndex(0);
         setCurrentMistakes([]);
@@ -224,6 +233,7 @@ export default function ExerciseTypePage(props) {
                                 onFocus={handleInputFocus}
                                 onBlur={handleInputBlur}
                                 onKeyDown={handleKeyDown}
+                                onKeyUp={handleKeyUp}
                             />
                             <VirtualText
                                 text={text}
@@ -266,7 +276,11 @@ export default function ExerciseTypePage(props) {
                             </Paper></Grid>
                         </Grid>
                         <Grid item xs={12}>
-                            <VirtualKeyboard nextChar={text[currentIndex]} layout={layout} />
+                            <VirtualKeyboard
+                                nextChar={text[currentIndex]}
+                                pressedChar={pressedChar}
+                                layout={layout}
+                            />
                         </Grid>
                     </Grid>
             }
